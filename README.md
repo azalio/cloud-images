@@ -42,9 +42,6 @@ brew install packer qemu make
 # Build image (takes ~7-10 mins on M3)
 make build
 
-# Interactive test (opens QEMU window)
-make check
-
 # Automated CI test (background process)
 make check-auto
 ```
