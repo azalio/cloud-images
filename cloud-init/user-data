@@ -6,7 +6,8 @@ users:
     shell: /bin/bash
     lock_passwd: true
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO+6aHh0nFcEW1YbwcMJmh009IjRa1UhqGlhveKYR2E3 azalio@azalio-osx
+      - __REPLACE_ME__               # Auto-generated key (для Packer)
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO+6aHh0nFcEW1YbwcMJmh009IjRa1UhqGlhveKYR2E3 azalio@azalio-osx # Твой постоянный ключ (для доступа)
 
 ssh_pwauth: false
 

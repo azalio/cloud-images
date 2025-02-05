@@ -18,9 +18,11 @@ generate-key:
 	ssh-keygen -t ed25519 -f $(SSH_KEY_NAME) -q -N ""
 
 build: generate-key
-	@echo "Запуск сборки образа по шаблону $(PACKER_TEMPLATE)..."
-	# Запуск Packer с логированием
+	@echo "Запуск сборки образа..."
+	@sed "s|__REPLACE_ME__|$(shell cat $(SSH_KEY_NAME).pub)|" cloud-init/user-data > cloud-init/user-data.tmp
+	@mv cloud-init/user-data.tmp cloud-init/user-data
 	PACKER_LOG=1 packer build $(PACKER_TEMPLATE)
+	@git checkout -- cloud-init/user-data  # Восстанавливаем оригинал после сборки
 
 clean:
 	@echo "Очистка каталога сборки: $(OUTPUT_DIR) и SSH ключей"
