@@ -39,12 +39,13 @@ check:
 
 check-auto:
 	@echo "Starting VM in background..."
-	@qemu-system-x86_64 \
+	@OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES qemu-system-x86_64 \
 		-m 4G \
 		-smp 4 \
 		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
 		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 \
-		-daemonize
+		-daemonize \
+		-nographic
 	@echo "Waiting 20s for VM to boot..."
 	@sleep 20
 	@ssh -i $(SSH_KEY_NAME) ubuntu@localhost -p 60022 \
