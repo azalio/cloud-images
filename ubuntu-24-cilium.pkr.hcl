@@ -16,18 +16,15 @@ source "qemu" "ubuntu" {
   accelerator       = "tcg"
   disk_compression  = true
 
-  
-  # SSH настройки
   ssh_username      = "ubuntu"
   ssh_private_key_file = "./packer-key"
   ssh_agent_auth    = false
   ssh_timeout       = "15m"
 
-  # Настройки VM
   memory           = "4096"
   cpus             = "4"
   
-  # Cloud-init настройки
+  
   cd_files         = ["./cloud-init/meta-data", "./cloud-init/user-data"]
   cd_label         = "cidata"
 

@@ -34,9 +34,6 @@ graph TD
 ```bash
 # Install required tools via Homebrew
 brew install packer qemu make
-
-# Verify Go version (required for Cilium CLI)
-brew install go
 ```
 
 ## Quick Start
@@ -67,5 +64,5 @@ make check-auto
 
 - Telegram Channel with IT Notes: [t.me/azalio_tech](http://t.me/azalio_tech)  
 - LinkedIn Profile: [linkedin.com/in/azalio](https://www.linkedin.com/in/azalio/)  
-- GitHub Repository: [github.com/azalio/kubevirt-cilium-image](https://github.com/azalio/kubevirt-cilium-image)
+- GitHub Repository: [https://github.com/azalio/cloud-images](https://github.com/azalio/cloud-images)
 ```

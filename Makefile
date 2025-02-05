@@ -4,7 +4,7 @@ OUTPUT_DIR := output
 
 SSH_KEY_NAME := packer-key
 
-.PHONY: all build clean generate-key
+.PHONY: all build clean generate-key check check-auto
 
 all: build
 
@@ -60,15 +60,7 @@ check-auto:
 	@echo "Stopping VM..."
 	@pkill qemu-system-x86_64 || true
 
-test-cluster:
-	@echo "Testing Kubernetes cluster..."
-	@ssh -i $(SSH_KEY_NAME) ubuntu@localhost -p 60022 \
-		"until kubectl get nodes; do sleep 5; done; \
-		cilium status; \
-		kubectl get pods -A"
-
 clean:
 	@echo "Cleaning build directory: $(OUTPUT_DIR) and SSH keys"
 	rm -rf $(OUTPUT_DIR) $(SSH_KEY_NAME)*
 
-.PHONY: all build clean generate-key check check-auto test-cluster

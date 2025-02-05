@@ -8,7 +8,7 @@ users:
     ssh_authorized_keys:
       - __REPLACE_ME__
 
-disable_root: true  # Отключает SSH доступ для root
+disable_root: true
 ssh_pwauth: no
 manage_etc_hosts: true
 preserve_hostname: false
