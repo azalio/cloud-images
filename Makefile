@@ -20,10 +20,10 @@ generate-key:
 
 build: generate-key
 	@echo "Запуск сборки образа..."
-	@sed "s|__REPLACE_ME__|$(shell cat $(SSH_KEY_NAME).pub)|" cloud-init/user-data > cloud-init/user-data.tmp
-	@mv cloud-init/user-data.tmp cloud-init/user-data
+	@echo "Generating cloud-init config..."
+	@mkdir -p cloud-init
+	@sed "s|__REPLACE_ME__|$(shell cat $(SSH_KEY_NAME).pub)|" templates/cloud-init/user-data.tpl > cloud-init/user-data
 	PACKER_LOG=1 packer build $(PACKER_TEMPLATE)
-	@git checkout -- cloud-init/user-data  # Восстанавливаем оригинал после сборки
 
 clean:
 	@echo "Очистка каталога сборки: $(OUTPUT_DIR) и SSH ключей"

@@ -3,3 +3,5 @@ output
 # SSH keys
 packer-key
 packer-key.pub
+# Generated cloud-init config
+cloud-init/user-data
