@@ -16,12 +16,5 @@ ssh:
 manage_etc_hosts: true
 preserve_hostname: false
 
-packages:
-  - cloud-utils
-
 runcmd:
   - cloud-init clean --logs --machine-id
-  - rm -f /etc/ssh/ssh_host_*
-  - dpkg-reconfigure openssh-server
-  - echo "Waiting for cloud-init to complete..."
-  - cloud-init status --wait

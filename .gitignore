@@ -1,5 +1,6 @@
 output
 .aider*
+.vscode
 # SSH keys
 packer-key
 packer-key.pub
