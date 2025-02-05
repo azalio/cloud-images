@@ -4,6 +4,13 @@ OUTPUT_DIR := output
 
 SSH_KEY_NAME := packer-key
 
+# SSH options for automation
+SSH_OPTS := -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            -o GlobalKnownHostsFile=/dev/null \
+            -o ConnectTimeout=5
+SSH_PORT := 60022
+
 .PHONY: all build clean generate-key check-auto
 
 all: build
@@ -23,7 +30,7 @@ build: clean generate-key
 	PACKER_LOG=1 packer build $(PACKER_TEMPLATE)
 
 check-auto:
-	@echo "Starting VM in background..."
+	@echo "[$(shell date +%T)] Starting QEMU VM in background..."
 	@OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES qemu-system-x86_64 \
 		-m 4G \
 		-smp 4 \
@@ -31,23 +38,17 @@ check-auto:
 		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 \
 		-daemonize
 	@echo "Waiting 30s for VM to boot..."
-	@sleep 30
-	@echo "Waiting for SSH connection..."
-	@until ssh -q -o ConnectTimeout=2 \
-		-o StrictHostKeyChecking=no \
-		-o UserKnownHostsFile=/dev/null \
-		-o GlobalKnownHostsFile=/dev/null \
-		-i $(SSH_KEY_NAME) ubuntu@localhost -p 60022 exit; do \
+	@sleep 15
+	@echo "[$(shell date +%T)] Waiting for SSH readiness..."
+	@until ssh -q $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) exit; do \
 		sleep 5; \
-		echo "Retrying SSH connection..."; \
+		echo "[$(shell date +%T)] Retrying SSH..."; \
 	done
-	@ssh -o StrictHostKeyChecking=no \
-		-o UserKnownHostsFile=/dev/null \
-		-o GlobalKnownHostsFile=/dev/null \
-		-i $(SSH_KEY_NAME) \
-		ubuntu@localhost -p 60022 \
+	@echo "[$(shell date +%T)] Testing Kubernetes cluster..."
+	@ssh $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) \
 		"export KUBECONFIG=.kube/config; kubectl cluster-info && cilium version"
-	@echo "Stopping VM..."
+	@echo "[$(shell date +%T)] Tests passed!"
+	@echo "[$(shell date +%T)] Stopping VM..."
 	@pkill qemu-system-x86_64 || true
 
 clean:
