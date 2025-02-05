@@ -45,9 +45,18 @@ check-auto:
 		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
 		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 \
 		-daemonize
-	@echo "Waiting 20s for VM to boot..."
-	@sleep 20
-	@ssh -i $(SSH_KEY_NAME) ubuntu@localhost -p 60022 \
+	@echo "Waiting 30s for VM to boot..."
+	@sleep 30
+	@echo "Waiting for SSH connection..."
+	@until ssh -q -o ConnectTimeout=2 -i $(SSH_KEY_NAME) ubuntu@localhost -p 60022 exit; do \
+		sleep 5; \
+		echo "Retrying SSH connection..."; \
+	done
+	@ssh -o StrictHostKeyChecking=no \
+		-o UserKnownHostsFile=/dev/null \
+		-o GlobalKnownHostsFile=/dev/null \
+		-i $(SSH_KEY_NAME) \
+		ubuntu@localhost -p 60022 \
 		"kubectl cluster-info && cilium status"
 	@echo "Stopping VM..."
 	@pkill qemu-system-x86_64 || true
