@@ -8,11 +8,8 @@ users:
     plain_text_passwd: 'ubuntu'
 
 ssh_pwauth: true
-# disable_root: false
 
 ssh:
-  # install-server: true
-  # permit_root_login: true
   password_auth: true
 
 # package_update: true
@@ -21,8 +18,8 @@ ssh:
 # packages:
 #   - openssh-server
 
-runcmd:
-  - systemctl enable ssh
-  - systemctl start ssh
-  - echo "ubuntu:ubuntu" | chpasswd
-  - systemctl restart ssh
+# runcmd:
+#   - systemctl enable ssh
+#   - systemctl start ssh
+#   - echo "ubuntu:ubuntu" | chpasswd
+#   - systemctl restart ssh

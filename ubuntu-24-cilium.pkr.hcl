@@ -19,11 +19,6 @@ source "qemu" "ubuntu" {
   cd_files         = ["./cloud-init/meta-data", "./cloud-init/user-data"]
   cd_label         = "cidata"
 
-  # Настройки сети
-  # net_device       = "virtio-net"
-  # boot_wait        = "2m"
-
-  # Дополнительные параметры QEMU
   qemuargs = [
     ["-display", "none"],
     ["-serial", "mon:stdio"],
@@ -37,10 +32,18 @@ build {
   sources = ["source.qemu.ubuntu"]
 
   provisioner "shell" {
+    environment_vars = [
+       "DEBIAN_FRONTEND=noninteractive",
+       "LC_ALL=C",
+       "LANG=en_US.UTF-8"
+    ]
+
     inline = [
       "# Обновляем систему и устанавливаем базовые утилиты",
       "sudo apt-get update",
       "sudo apt-get install -y curl vim net-tools",
+      "sudo apt-get clean",
+      "sudo rm -rf /var/lib/apt/lists/*",
     ]
   }
 }
