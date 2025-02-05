@@ -16,7 +16,7 @@ sudo timedatectl set-timezone Europe/Moscow
 # Обновляем систему и устанавливаем базовые утилиты
 echo "Installing system packages..."
 sudo apt-get update
-sudo apt-get install -y curl vim net-tools golang
+sudo apt-get install -y curl vim net-tools golang iptables-persistent
 sudo apt-get clean
 sudo rm -rf /var/lib/apt/lists/*
  
@@ -27,8 +27,11 @@ sleep 15 # Даем время на установку k3s
 
 # Устанавливаем cilium CLI
 echo "Installing Cilium CLI..."
+# shellcheck disable=SC2155
 export CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+# shellcheck disable=SC2155
 export GOOS=$(go env GOOS)
+# shellcheck disable=SC2155
 export GOARCH=$(go env GOARCH)
 curl -L --remote-name-all "https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-${GOOS}-${GOARCH}.tar.gz{,.sha256sum}"
 sha256sum --check "cilium-${GOOS}-${GOARCH}.tar.gz.sha256sum"
