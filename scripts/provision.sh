@@ -4,7 +4,6 @@ set -e
 
 # Настройка времени и локали
 sudo timedatectl set-timezone Europe/Moscow
-sudo localectl set-locale LANG=en_US.UTF-8
 
 # Обновляем систему и устанавливаем базовые утилиты
 sudo apt-get update
