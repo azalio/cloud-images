@@ -4,7 +4,7 @@ OUTPUT_DIR := output
 
 SSH_KEY_NAME := packer-key
 
-.PHONY: all build clean generate-key check check-auto
+.PHONY: all build clean generate-key check-auto
 
 all: build
 
@@ -21,16 +21,6 @@ build: clean generate-key
 	@echo "Validating Packer template..."
 	packer validate $(PACKER_TEMPLATE)
 	PACKER_LOG=1 packer build $(PACKER_TEMPLATE)
-
-check:
-	@echo "Starting VM for testing..."
-	@echo "Close the VM window manually after checks"
-	qemu-system-x86_64 \
-		-m 4G \
-		-smp 4 \
-		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
-		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 \
-		-nographic
 
 check-auto:
 	@echo "Starting VM in background..."
