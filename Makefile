@@ -34,7 +34,7 @@ check:
 		-m 4G \
 		-smp 4 \
 		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
-		-nic user,hostfwd=tcp::2222-:22 \
+		-nic user,hostfwd=tcp:127.0.0.1:2222-:22 \
 		-nographic
 
 check-auto:
@@ -43,7 +43,7 @@ check-auto:
 		-m 4G \
 		-smp 4 \
 		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
-		-nic user,hostfwd=tcp::2222-:22 \
+		-nic user,hostfwd=tcp:127.0.0.1:2222-:22 \
 		-daemonize
 	@echo "Waiting 20s for VM to boot..."
 	@sleep 20
