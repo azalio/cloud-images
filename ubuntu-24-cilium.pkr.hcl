@@ -31,10 +31,6 @@ source "qemu" "ubuntu" {
 }
 
 build {
-  variables = {
-    ssh_public_key = file("./packer-key.pub")
-  }
-
   sources = ["source.qemu.ubuntu"]
 
   provisioner "shell" {
