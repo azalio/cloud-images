@@ -37,8 +37,8 @@ check-auto:
 		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
 		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 \
 		-daemonize
-	@echo "Waiting 30s for VM to boot..."
-	@sleep 15
+	@echo "[$(shell date +%T)] Waiting 30s for VM to boot..."
+	@sleep 30
 	@echo "[$(shell date +%T)] Waiting for SSH readiness..."
 	@until ssh -q $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) exit; do \
 		sleep 5; \
@@ -46,7 +46,7 @@ check-auto:
 	done
 	@echo "[$(shell date +%T)] Testing Kubernetes cluster..."
 	@ssh $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) \
-		"export KUBECONFIG=.kube/config; kubectl cluster-info && cilium version"
+		"export KUBECONFIG=.kube/config; sudo systemctl status k3s; kubectl cluster-info ; cilium version"
 	@echo "[$(shell date +%T)] Tests passed!"
 	@echo "[$(shell date +%T)] Stopping VM..."
 	@pkill qemu-system-x86_64 || true
