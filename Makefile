@@ -4,7 +4,7 @@
 PACKER_TEMPLATE := ubuntu-24-cilium.pkr.hcl
 
 # Каталог, куда Packer будет сохранять выходной образ
-OUTPUT_DIR := output-ubuntu-24.04-kubevirt
+OUTPUT_DIR := output
 
 # Имя SSH ключа
 SSH_KEY_NAME := packer-key
@@ -15,6 +15,7 @@ all: build
 
 generate-key:
 	@echo "Generating new SSH key..."
+	@rm -rf packer-key
 	ssh-keygen -t ed25519 -f $(SSH_KEY_NAME) -q -N ""
 
 build: generate-key
