@@ -27,6 +27,9 @@ build: generate-key
 	packer validate $(PACKER_TEMPLATE)
 	PACKER_LOG=1 packer build $(PACKER_TEMPLATE)
 
+check:
+	qemu-system-x86_64 -m 4G -smp 4 -drive file=output/packer-ubuntu,format=qcow2
+
 clean:
 	@echo "Очистка каталога сборки: $(OUTPUT_DIR) и SSH ключей"
 	rm -rf $(OUTPUT_DIR) $(SSH_KEY_NAME)*

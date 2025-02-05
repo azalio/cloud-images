@@ -17,7 +17,7 @@ sudo timedatectl set-timezone Europe/Moscow
 echo "Installing system packages..."
 sudo apt-get update
 sudo apt-get install --no-install-recommends -y \
-    curl ca-certificates iptables-persistent
+    curl ca-certificates iptables-persistent golang
 sudo apt-get clean
 sudo rm -rf /var/lib/apt/lists/*
  

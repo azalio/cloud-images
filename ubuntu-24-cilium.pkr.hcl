@@ -14,6 +14,8 @@ source "qemu" "ubuntu" {
   disk_size         = "20G"
   format            = "qcow2"
   accelerator       = "tcg"
+  disk_compression  = true
+
   
   # SSH настройки
   ssh_username      = "ubuntu"
@@ -32,7 +34,7 @@ source "qemu" "ubuntu" {
   qemuargs = [
     ["-display", "none"],
     ["-serial", "mon:stdio"],
-    ["-compress"],
+    ["-nodefaults"],
   ]
 
   display          = "none"
