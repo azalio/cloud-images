@@ -24,7 +24,7 @@ sudo rm -rf /var/lib/apt/lists/*
 # Install k3s without flannel, kube-proxy, and network-policy
 echo "Installing k3s..."
 curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='--flannel-backend=none --disable-network-policy --disable-kube-proxy' sh -
-sleep 15 # Даем время на установку k3s
+sleep 15 # Allow time for k3s installation
 
 # Устанавливаем cilium CLI
 echo "Configuring kubeconfig..."

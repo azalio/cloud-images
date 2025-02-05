@@ -10,6 +10,7 @@ ARM-to-x86 cross-architecture emulation fully supported via QEMU
 - x86 compatibility layer for ARM-based development machines
 - Automated security hardening:
   - SSH root access disabled
+- KubeVirt-ready for VM management in Kubernetes clusters (https://kubevirt.io)
 
 ## Cross-Architecture Support
 
@@ -27,6 +28,16 @@ graph TD
 | Packer    | 1.9.x           |
 | QEMU      | 8.1.x           | 
 | macOS     | Sonoma 14.4+    |
+
+## Prerequisites
+
+```bash
+# Install required tools via Homebrew
+brew install packer qemu make
+
+# Verify Go version (required for Cilium CLI)
+brew install go
+```
 
 ## Quick Start
 
@@ -51,4 +62,10 @@ make check-auto
 ├── templates/                # Config templates
 ├── Makefile                  # Build automation
 └── ubuntu-24-cilium.pkr.hcl  # Packer template
+
+## Contact
+
+- Telegram Channel with IT Notes: [t.me/azalio_tech](http://t.me/azalio_tech)  
+- LinkedIn Profile: [linkedin.com/in/azalio](https://www.linkedin.com/in/azalio/)  
+- GitHub Repository: [github.com/azalio/kubevirt-cilium-image](https://github.com/azalio/kubevirt-cilium-image)
 ```
