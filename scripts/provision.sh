@@ -2,18 +2,18 @@
 
 set -e
 
-# Ожидаем полного завершения cloud-init
+# Wait for full cloud-init completion
 echo "Waiting for cloud-init to complete..."
 sudo cloud-init status --wait >/dev/null 2>&1 || true
 
-# Даем apt-демону завершить инициализацию
+# Let apt-daemon finish initialization
 sudo systemctl is-active apt-daily.service >/dev/null && \
   sudo systemctl stop apt-daily.service
 
-# Настройка времени и локали
+# Configure timezone and locale
 sudo timedatectl set-timezone Europe/Moscow
 
-# Обновляем систему и устанавливаем базовые утилиты
+# Update system and install basic utilities
 echo "Installing system packages..."
 sudo apt-get update
 sudo apt-get install --no-install-recommends -y \
@@ -21,7 +21,7 @@ sudo apt-get install --no-install-recommends -y \
 sudo apt-get clean
 sudo rm -rf /var/lib/apt/lists/*
  
-# Устанавливаем k3s без flannel, kube-proxy и network-policy
+# Install k3s without flannel, kube-proxy, and network-policy
 echo "Installing k3s..."
 curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='--flannel-backend=none --disable-network-policy --disable-kube-proxy' sh -
 sleep 15 # Даем время на установку k3s
@@ -46,7 +46,7 @@ sha256sum --check "cilium-${GOOS}-${GOARCH}.tar.gz.sha256sum"
 sudo tar -C /usr/local/bin -xzvf "cilium-${GOOS}-${GOARCH}.tar.gz"
 rm "cilium-${GOOS}-${GOARCH}.tar.gz" "cilium-${GOOS}-${GOARCH}.tar.gz.sha256sum"
 
-# Предзагружаем образы Cilium
+# Preload Cilium images
 echo "Preloading Cilium images..."
 sudo ctr image pull quay.io/cilium/cilium:v1.16.6@sha256:1e0896b1c4c188b4812c7e0bed7ec3f5631388ca88325c1391a0ef9172c448da
 sudo ctr image pull quay.io/cilium/operator-generic:v1.16.6@sha256:13d32071d5a52c069fb7c35959a56009c6914439adc73e99e098917646d154fc
@@ -58,11 +58,11 @@ cilium version
 sudo ctr images ls
 kubectl get nodes -o wide
 
-# Удаление ненужных пакетов
+# Remove unnecessary packages
 sudo apt-get purge -y golang
 sudo apt-get autoremove -y
 
-# Глубокая очистка
+# Deep cleanup
 echo "Deep cleaning..."
 sudo apt-get autoremove -y
 sudo apt-get clean
@@ -71,7 +71,7 @@ sudo rm -rf /usr/share/doc/*
 sudo rm -rf /usr/share/man/*
 sudo find /var/log -type f -exec truncate -s 0 {} \;
 
-# Очистка истории
+# Cleanup history
 echo "Cleaning up..."
 sudo rm -rf /root/.bash_history
 sudo rm -rf /home/ubuntu/.bash_history
