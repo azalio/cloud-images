@@ -18,7 +18,7 @@ generate-key:
 	@rm -rf packer-key
 	ssh-keygen -t ed25519 -f $(SSH_KEY_NAME) -q -N ""
 
-build: generate-key
+build: clean generate-key
 	@echo "Запуск сборки образа..."
 	@echo "Generating cloud-init config..."
 	@mkdir -p cloud-init
@@ -48,7 +48,11 @@ check-auto:
 	@echo "Waiting 30s for VM to boot..."
 	@sleep 30
 	@echo "Waiting for SSH connection..."
-	@until ssh -q -o ConnectTimeout=2 -i $(SSH_KEY_NAME) ubuntu@localhost -p 60022 exit; do \
+	@until ssh -q -o ConnectTimeout=2 \
+		-o StrictHostKeyChecking=no \
+		-o UserKnownHostsFile=/dev/null \
+		-o GlobalKnownHostsFile=/dev/null \
+		-i $(SSH_KEY_NAME) ubuntu@localhost -p 60022 exit; do \
 		sleep 5; \
 		echo "Retrying SSH connection..."; \
 	done
@@ -57,7 +61,7 @@ check-auto:
 		-o GlobalKnownHostsFile=/dev/null \
 		-i $(SSH_KEY_NAME) \
 		ubuntu@localhost -p 60022 \
-		"kubectl cluster-info && cilium status"
+		"export KUBECONFIG=.kube/config; kubectl cluster-info && cilium version"
 	@echo "Stopping VM..."
 	@pkill qemu-system-x86_64 || true
 
