@@ -8,7 +8,7 @@ variable "ubuntu_codename" {
 
 source "qemu" "ubuntu" {
   iso_url           = "https://cloud-images.ubuntu.com/minimal/releases/${var.ubuntu_codename}/release/ubuntu-${var.ubuntu_version}-minimal-cloudimg-amd64.img"
-  iso_checksum      = "file:https://cloud-images.ubuntu.com/minimal/releases/noble/release/SHA256SUMS"
+  iso_checksum      = "file:https://cloud-images.ubuntu.com/minimal/releases/${var.ubuntu_codename}/release/SHA256SUMS"
   disk_image        = true
   output_directory  = "output"
   disk_size         = "40G"
