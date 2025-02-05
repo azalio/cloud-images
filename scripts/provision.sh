@@ -26,6 +26,13 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='--flannel-backend=none --disabl
 sleep 15 # Даем время на установку k3s
 
 # Устанавливаем cilium CLI
+echo "Configuring kubeconfig..."
+export KUBECONFIG=~/.kube/config
+mkdir -p ~/.kube
+sudo k3s kubectl config view --raw > "$KUBECONFIG"
+chmod 600 "$KUBECONFIG"
+echo "export KUBECONFIG=$KUBECONFIG" >> ~/.bashrc
+
 echo "Installing Cilium CLI..."
 # shellcheck disable=SC2155
 export CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
@@ -48,7 +55,7 @@ sudo ctr image pull quay.io/cilium/cilium-envoy:v1.30.9-1737073743-40a016d11c0d8
 echo "Verifications:"
 cilium version
 sudo ctr images ls
-sudo k3s kubectl get nodes -o wide
+kubectl get nodes -o wide
 
 # Очистка истории
 echo "Cleaning up..."
