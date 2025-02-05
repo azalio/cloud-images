@@ -28,7 +28,37 @@ build: generate-key
 	PACKER_LOG=1 packer build $(PACKER_TEMPLATE)
 
 check:
-	qemu-system-x86_64 -m 4G -smp 4 -drive file=output/packer-ubuntu,format=qcow2
+	@echo "Starting VM for testing..."
+	@echo "Close the VM window manually after checks"
+	qemu-system-x86_64 \
+		-m 4G \
+		-smp 4 \
+		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
+		-nic user,hostfwd=tcp::2222-:22 \
+		-nographic
+
+check-auto:
+	@echo "Starting VM in background..."
+	@qemu-system-x86_64 \
+		-m 4G \
+		-smp 4 \
+		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
+		-nic user,hostfwd=tcp::2222-:22 \
+		-daemonize \
+		-nographic
+	@echo "Waiting 20s for VM to boot..."
+	@sleep 20
+	@ssh -i $(SSH_KEY_NAME) ubuntu@localhost -p 2222 \
+		"kubectl cluster-info && cilium status"
+	@echo "Stopping VM..."
+	@pkill qemu-system-x86_64 || true
+
+test-cluster:
+	@echo "Testing Kubernetes cluster..."
+	@ssh -i $(SSH_KEY_NAME) ubuntu@localhost -p 2222 \
+		"until kubectl get nodes; do sleep 5; done; \
+		cilium status; \
+		kubectl get pods -A"
 
 clean:
 	@echo "Очистка каталога сборки: $(OUTPUT_DIR) и SSH ключей"
