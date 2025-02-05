@@ -1,2 +1,5 @@
 output
 .aider*
+# SSH keys
+packer-key
+packer-key.pub

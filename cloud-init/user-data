@@ -4,13 +4,14 @@ users:
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: users, admin
     shell: /bin/bash
-    lock_passwd: false
-    plain_text_passwd: 'ubuntu'
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ${ssh_public_key}
 
-ssh_pwauth: true
+ssh_pwauth: false
 
 ssh:
-  password_auth: true
+  password_auth: false
 
 # package_update: true
 # package_upgrade: true

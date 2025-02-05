@@ -9,7 +9,9 @@ source "qemu" "ubuntu" {
   
   # SSH настройки
   ssh_username      = "ubuntu"
-  ssh_password      = "ubuntu"
+  ssh_private_key_file = "./packer-key"
+  ssh_agent_auth    = false
+  ssh_timeout       = "15m"
 
   # Настройки VM
   memory           = "2048"
@@ -29,6 +31,10 @@ source "qemu" "ubuntu" {
 }
 
 build {
+  variables = {
+    ssh_public_key = file("./packer-key.pub")
+  }
+
   sources = ["source.qemu.ubuntu"]
 
   provisioner "shell" {
