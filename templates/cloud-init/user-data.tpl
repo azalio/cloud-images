@@ -1,4 +1,6 @@
 #cloud-config
+disable_root: true  # Отключает SSH доступ для root
+
 users:
   - name: ubuntu
     sudo: ALL=(ALL) NOPASSWD:ALL
