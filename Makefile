@@ -44,8 +44,7 @@ check-auto:
 		-smp 4 \
 		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
 		-nic user,hostfwd=tcp::2222-:22 \
-		-daemonize \
-		-nographic
+		-daemonize
 	@echo "Waiting 20s for VM to boot..."
 	@sleep 20
 	@ssh -i $(SSH_KEY_NAME) ubuntu@localhost -p 2222 \
