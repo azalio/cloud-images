@@ -59,10 +59,11 @@ make check-auto
 ├── templates/                # Config templates
 ├── Makefile                  # Build automation
 └── ubuntu-24-cilium.pkr.hcl  # Packer template
+```
 
 ## Contact
 
 - Telegram Channel with IT Notes: [t.me/azalio_tech](http://t.me/azalio_tech)  
 - LinkedIn Profile: [linkedin.com/in/azalio](https://www.linkedin.com/in/azalio/)  
 - GitHub Repository: [https://github.com/azalio/cloud-images](https://github.com/azalio/cloud-images)
-```
+
