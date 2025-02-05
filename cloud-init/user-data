@@ -13,6 +13,22 @@ ssh_pwauth: false
 ssh:
   password_auth: false
 
+power_state:
+  mode: reboot
+  message: Reboot after cloud-init
+  timeout: 5
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - cloud-utils
+
+runcmd:
+  - cloud-init clean --logs --machine-id
+  - rm -f /etc/ssh/ssh_host_*
+  - dpkg-reconfigure openssh-server
+
 # package_update: true
 # package_upgrade: true
 

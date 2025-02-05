@@ -1,9 +1,17 @@
+variable "ubuntu_version" {
+  default = "24.04"
+}
+
+variable "ubuntu_codename" {
+  default = "noble"
+}
+
 source "qemu" "ubuntu" {
-  iso_url           = "https://cloud-images.ubuntu.com/minimal/releases/noble/release/ubuntu-24.04-minimal-cloudimg-amd64.img"
+  iso_url           = "https://cloud-images.ubuntu.com/minimal/releases/${var.ubuntu_codename}/release/ubuntu-${var.ubuntu_version}-minimal-cloudimg-amd64.img"
   iso_checksum      = "file:https://cloud-images.ubuntu.com/minimal/releases/noble/release/SHA256SUMS"
   disk_image        = true
   output_directory  = "output"
-  disk_size         = "20G"
+  disk_size         = "40G"
   format            = "qcow2"
   accelerator       = "tcg"
   
@@ -14,8 +22,8 @@ source "qemu" "ubuntu" {
   ssh_timeout       = "15m"
 
   # Настройки VM
-  memory           = "2048"
-  cpus             = "2"
+  memory           = "4096"
+  cpus             = "4"
   
   # Cloud-init настройки
   cd_files         = ["./cloud-init/meta-data", "./cloud-init/user-data"]
@@ -39,13 +47,6 @@ build {
        "LC_ALL=C",
        "LANG=en_US.UTF-8"
     ]
-
-    inline = [
-      "# Обновляем систему и устанавливаем базовые утилиты",
-      "sudo apt-get update",
-      "sudo apt-get install -y curl vim net-tools",
-      "sudo apt-get clean",
-      "sudo rm -rf /var/lib/apt/lists/*",
-    ]
+    script = "scripts/provision.sh"
   }
 }
