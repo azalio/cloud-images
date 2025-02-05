@@ -1,12 +1,7 @@
-# Makefile для сборки образа с помощью Packer
-
-# Имя файла шаблона Packer
 PACKER_TEMPLATE := ubuntu-24-cilium.pkr.hcl
 
-# Каталог, куда Packer будет сохранять выходной образ
 OUTPUT_DIR := output
 
-# Имя SSH ключа
 SSH_KEY_NAME := packer-key
 
 .PHONY: all build clean generate-key
