@@ -14,7 +14,7 @@ generate-key:
 	ssh-keygen -t ed25519 -f $(SSH_KEY_NAME) -q -N ""
 
 build: clean generate-key
-	@echo "Запуск сборки образа..."
+	@echo "Starting image build..."
 	@echo "Generating cloud-init config..."
 	@mkdir -p cloud-init
 	@sed "s|__REPLACE_ME__|$(shell cat $(SSH_KEY_NAME).pub)|" templates/cloud-init/user-data.tpl > cloud-init/user-data
@@ -68,6 +68,7 @@ test-cluster:
 		kubectl get pods -A"
 
 clean:
-	@echo "Очистка каталога сборки: $(OUTPUT_DIR) и SSH ключей"
+	@echo "Cleaning build directory: $(OUTPUT_DIR) and SSH keys"
 	rm -rf $(OUTPUT_DIR) $(SSH_KEY_NAME)*
 
+.PHONY: all build clean generate-key check check-auto test-cluster
