@@ -34,7 +34,7 @@ check:
 		-m 4G \
 		-smp 4 \
 		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
-		-nic user,hostfwd=tcp:127.0.0.1:2222-:22 \
+		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 \
 		-nographic
 
 check-auto:
@@ -43,18 +43,18 @@ check-auto:
 		-m 4G \
 		-smp 4 \
 		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
-		-nic user,hostfwd=tcp:127.0.0.1:2222-:22 \
+		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 \
 		-daemonize
 	@echo "Waiting 20s for VM to boot..."
 	@sleep 20
-	@ssh -i $(SSH_KEY_NAME) ubuntu@localhost -p 2222 \
+	@ssh -i $(SSH_KEY_NAME) ubuntu@localhost -p 60022 \
 		"kubectl cluster-info && cilium status"
 	@echo "Stopping VM..."
 	@pkill qemu-system-x86_64 || true
 
 test-cluster:
 	@echo "Testing Kubernetes cluster..."
-	@ssh -i $(SSH_KEY_NAME) ubuntu@localhost -p 2222 \
+	@ssh -i $(SSH_KEY_NAME) ubuntu@localhost -p 60022 \
 		"until kubectl get nodes; do sleep 5; done; \
 		cilium status; \
 		kubectl get pods -A"
