@@ -23,6 +23,8 @@ build: generate-key
 	@echo "Generating cloud-init config..."
 	@mkdir -p cloud-init
 	@sed "s|__REPLACE_ME__|$(shell cat $(SSH_KEY_NAME).pub)|" templates/cloud-init/user-data.tpl > cloud-init/user-data
+	@echo "Validating Packer template..."
+	packer validate $(PACKER_TEMPLATE)
 	PACKER_LOG=1 packer build $(PACKER_TEMPLATE)
 
 clean:

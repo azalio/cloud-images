@@ -32,6 +32,8 @@ source "qemu" "ubuntu" {
   qemuargs = [
     ["-display", "none"],
     ["-serial", "mon:stdio"],
+    ["-machine", "q35,accel=kvm:tcg"],
+    ["-cpu", "host"],
   ]
 
   display          = "none"
@@ -39,6 +41,7 @@ source "qemu" "ubuntu" {
 }
 
 build {
+  name = "cilium-base-image"
   sources = ["source.qemu.ubuntu"]
 
   provisioner "shell" {

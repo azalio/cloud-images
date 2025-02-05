@@ -12,6 +12,9 @@ ssh_pwauth: false
 
 ssh:
   password_auth: false
+  
+manage_etc_hosts: true
+preserve_hostname: false
 
 packages:
   - cloud-utils
