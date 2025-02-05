@@ -11,7 +11,7 @@ source "qemu" "ubuntu" {
   iso_checksum      = "file:https://cloud-images.ubuntu.com/minimal/releases/${var.ubuntu_codename}/release/SHA256SUMS"
   disk_image        = true
   output_directory  = "output"
-  disk_size         = "40G"
+  disk_size         = "20G"
   format            = "qcow2"
   accelerator       = "tcg"
   
@@ -32,6 +32,7 @@ source "qemu" "ubuntu" {
   qemuargs = [
     ["-display", "none"],
     ["-serial", "mon:stdio"],
+    ["-compress"],
   ]
 
   display          = "none"

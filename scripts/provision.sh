@@ -16,7 +16,8 @@ sudo timedatectl set-timezone Europe/Moscow
 # Обновляем систему и устанавливаем базовые утилиты
 echo "Installing system packages..."
 sudo apt-get update
-sudo apt-get install -y curl vim net-tools golang iptables-persistent
+sudo apt-get install --no-install-recommends -y \
+    curl ca-certificates iptables-persistent
 sudo apt-get clean
 sudo rm -rf /var/lib/apt/lists/*
  
@@ -56,6 +57,19 @@ echo "Verifications:"
 cilium version
 sudo ctr images ls
 kubectl get nodes -o wide
+
+# Удаление ненужных пакетов
+sudo apt-get purge -y golang
+sudo apt-get autoremove -y
+
+# Глубокая очистка
+echo "Deep cleaning..."
+sudo apt-get autoremove -y
+sudo apt-get clean
+sudo rm -rf /var/lib/apt/lists/*
+sudo rm -rf /usr/share/doc/*
+sudo rm -rf /usr/share/man/*
+sudo find /var/log -type f -exec truncate -s 0 {} \;
 
 # Очистка истории
 echo "Cleaning up..."
