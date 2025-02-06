@@ -51,6 +51,19 @@ check-auto:
 	@echo "[$(shell date +%T)] Stopping VM..."
 	@pkill qemu-system-x86_64 || true
 
+ssh:
+	@echo "[$(shell date +%T)] Starting QEMU VM in background..."
+	@OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES qemu-system-x86_64 \
+		-m 4G \
+		-smp 4 \
+		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
+		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 \
+		-daemonize
+	@echo "[$(shell date +%T)] Waiting for SSH connection..."
+	@until ssh -q $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) exit; do sleep 1; done
+	@ssh $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT)
+	@echo "[$(shell date +%T)] Stopping VM..."; pkill qemu-system-x86_64 || true
+
 clean:
 	@echo "Cleaning build directory: $(OUTPUT_DIR) and SSH keys"
 	rm -rf $(OUTPUT_DIR) $(SSH_KEY_NAME)*
