@@ -51,7 +51,15 @@ check-auto:
 	@echo "[$(shell date +%T)] Stopping VM..."
 	@pkill qemu-system-x86_64 || true
 
+output/packer-ubuntu: build
+	@echo "[$(shell date +%T)] Image verified: $@"
+
 ssh:
+	@if [ ! -f "output/packer-ubuntu" ]; then \
+		echo "[$(shell date +%T)] Image not found - starting build..."; \
+		make build || exit 1; \
+	fi
+	@echo "Starting SSH session with auto-built image"
 	@echo "[$(shell date +%T)] Starting QEMU VM in background..."
 	@OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES qemu-system-x86_64 \
 		-m 4G \
