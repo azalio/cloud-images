@@ -62,8 +62,8 @@ ssh:
 	@echo "Starting SSH session with auto-built image"
 	@echo "[$(shell date +%T)] Starting QEMU VM in background..."
 	@OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES qemu-system-x86_64 \
-		-m 4G \
-		-smp 4 \
+		-m 8G \
+		-smp 8 \
 		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
 		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 \
 		-daemonize
