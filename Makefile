@@ -1,4 +1,4 @@
-PACKER_TEMPLATE := ubuntu-24-cilium.pkr.hcl
+PACKER_TEMPLATE := ubuntu-24-cilium-amd64.pkr.hcl
 
 OUTPUT_DIR := output
 
@@ -10,6 +10,8 @@ SSH_OPTS := -o StrictHostKeyChecking=no \
             -o GlobalKnownHostsFile=/dev/null \
             -o ConnectTimeout=5
 SSH_PORT := 60022
+
+QEMU_CMD := qemu-system-x86_64
 
 .PHONY: all build clean generate-key check-auto
 
@@ -31,7 +33,7 @@ build: clean generate-key
 
 check-auto:
 	@echo "[$(shell date +%T)] Starting QEMU VM in background..."
-	@OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES qemu-system-x86_64 \
+	@OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES $(QEMU_CMD) \
 		-m 4G \
 		-smp 4 \
 		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
@@ -49,7 +51,7 @@ check-auto:
 		"export KUBECONFIG=.kube/config; sudo systemctl status k3s; kubectl cluster-info ; cilium version"
 	@echo "[$(shell date +%T)] Tests passed!"
 	@echo "[$(shell date +%T)] Stopping VM..."
-	@pkill qemu-system-x86_64 || true
+	@pkill $(QEMU_CMD) || true
 
 output/packer-ubuntu: build
 	@echo "[$(shell date +%T)] Image verified: $@"
@@ -61,16 +63,16 @@ ssh:
 	fi
 	@echo "Starting SSH session with auto-built image"
 	@echo "[$(shell date +%T)] Starting QEMU VM in background..."
-	@OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES qemu-system-x86_64 \
+	@OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES $(QEMU_CMD) \
 		-m 8G \
 		-smp 8 \
+		-nographic -serial none -monitor none \
 		-drive file=$(OUTPUT_DIR)/packer-ubuntu,format=qcow2 \
-		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 \
-		-daemonize
+		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 &
 	@echo "[$(shell date +%T)] Waiting for SSH connection..."
 	@until ssh -q $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) exit; do sleep 1; done
 	@ssh $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT)
-	@echo "[$(shell date +%T)] Stopping VM..."; pkill qemu-system-x86_64 || true
+	@echo "[$(shell date +%T)] Stopping VM..."; pkill $(QEMU_CMD) || true
 
 clean:
 	@echo "Cleaning build directory: $(OUTPUT_DIR) and SSH keys"
