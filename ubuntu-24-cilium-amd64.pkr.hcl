@@ -7,8 +7,10 @@ variable "ubuntu_codename" {
 }
 
 source "qemu" "ubuntu" {
-  iso_url           = "https://cloud-images.ubuntu.com/minimal/releases/${var.ubuntu_codename}/release/ubuntu-${var.ubuntu_version}-minimal-cloudimg-amd64.img"
-  iso_checksum      = "file:https://cloud-images.ubuntu.com/minimal/releases/${var.ubuntu_codename}/release/SHA256SUMS"
+  # iso_url           = "https://cloud-images.ubuntu.com/minimal/releases/${var.ubuntu_codename}/release/ubuntu-${var.ubuntu_version}-minimal-cloudimg-amd64.img"
+  iso_url           = "http://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
+  # iso_checksum      = "file:https://cloud-images.ubuntu.com/minimal/releases/${var.ubuntu_codename}/release/SHA256SUMS"
+  iso_checksum      = "file:http://cloud-images.ubuntu.com/releases/24.04/release/SHA256SUMS"
   disk_image        = true
   output_directory  = "output"
   disk_size         = "20G"
