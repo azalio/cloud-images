@@ -87,7 +87,7 @@ kubectl patch ds cilium -n kube-system --type='json' -p='[
   {"op": "replace", "path": "/spec/template/spec/containers/0/startupProbe/timeoutSeconds", "value": 10}
 ]'
 
-cilium status --wait
+# cilium status --wait
 
 # helm repo add cilium https://helm.cilium.io/
 # helm install cilium cilium/cilium --version 1.16.6 --namespace kube-system
