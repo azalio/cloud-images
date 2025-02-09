@@ -13,57 +13,52 @@ sudo systemctl is-active apt-daily.service >/dev/null && \
 # Configure timezone and locale
 sudo timedatectl set-timezone Europe/Moscow
 
-# Update system and install basic utilities
-echo "Installing system packages..."
+# Update system and install core dependencies
+echo "Updating system and installing core packages..."
 sudo apt-get update
 sudo apt-get install --no-install-recommends -y \
-    curl ca-certificates iptables-persistent golang less vim gpg strace
+    curl ca-certificates apt-transport-https
 
-# containerD 
+# Configure Docker repository
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-# Add the repository to Apt sources:
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
+# Configure Kubernetes repository
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+# Configure Helm repository
+curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+
+# Update package lists with new repositories
 sudo apt-get update
-sudo apt install containerd.io
+
+# Install all system packages
+echo "Installing system packages..."
+sudo apt-get install --no-install-recommends -y \
+    iptables-persistent golang less vim gpg strace \
+    containerd.io \
+    kubelet kubeadm kubectl \
+    helm
 
 # enable cri and SystemdCgroup
 containerd config dump | sudo tee /etc/containerd/config.toml
 sudo sed -i 's/^disabled_plugins = \["cri"\]$/#&/' /etc/containerd/config.toml
 sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
 sudo sed -i 's/pause:3.8/pause:3.10/' /etc/containerd/config.toml
-
 sudo sed -i 's/^#\(net\.ipv4\.ip_forward=1\)$/\1/' /etc/sysctl.d/99-sysctl.conf
 echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
-
 sudo systemctl enable containerd
 sudo systemctl restart containerd
 
-#kubeadm 
-
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update
-
-sudo apt-get install -y kubelet kubeadm kubectl
-sudo apt-mark hold kubelet kubeadm kubectl
-
 sudo systemctl enable --now kubelet
-
 sudo kubeadm init
-
-# cilium
-curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-sudo apt-get install apt-transport-https --yes
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-sudo apt-get update
-sudo apt-get install helm
 
 mkdir .kube
 sudo cp /etc/kubernetes/super-admin.conf .kube/config
