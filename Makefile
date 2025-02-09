@@ -61,6 +61,9 @@ ssh:
 		echo "[$(shell date +%T)] Image not found - starting build..."; \
 		make build || exit 1; \
 	fi
+
+	@echo sleep 60
+
 	@echo "Starting SSH session with auto-built image"
 	@echo "[$(shell date +%T)] Starting QEMU VM in background..."
 	@OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES $(QEMU_CMD) \
@@ -73,6 +76,14 @@ ssh:
 	@until ssh -q $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) exit; do sleep 1; done
 	@ssh $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) || true
 	@echo "[$(shell date +%T)] Stopping VM..."; pkill -f "$(QEMU_CMD).*$(OUTPUT_DIR)/packer-ubuntu" || true
+
+upload-image: output/packer-ubuntu
+	@echo "[$(shell date +%T)] Uploading image to Git LFS..."
+	@git lfs track "output/packer-ubuntu"
+	@git add .gitattributes output/packer-ubuntu
+	@git commit -m "Add new image built on $(shell date +%Y-%m-%d)"
+	@git push origin main
+	@echo "[$(shell date +%T)] Image uploaded to Git LFS."
 
 clean:
 	@echo "Cleaning build directory: $(OUTPUT_DIR) and SSH keys"
