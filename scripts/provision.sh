@@ -17,7 +17,7 @@ sudo timedatectl set-timezone Europe/Moscow
 echo "Updating system and installing core packages..."
 sudo apt-get update
 sudo apt-get install --no-install-recommends -y \
-    curl ca-certificates apt-transport-https
+    curl ca-certificates apt-transport-https gpg
 
 # Configure Docker repository
 sudo install -m 0755 -d /etc/apt/keyrings
@@ -42,7 +42,7 @@ sudo apt-get update
 # Install all system packages
 echo "Installing system packages..."
 sudo apt-get install --no-install-recommends -y \
-    iptables-persistent less vim gpg \
+    iptables-persistent less vim \
     containerd.io \
     kubelet kubeadm kubectl \
     helm
