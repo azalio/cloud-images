@@ -42,7 +42,7 @@ sudo apt-get update
 # Install all system packages
 echo "Installing system packages..."
 sudo apt-get install --no-install-recommends -y \
-    iptables-persistent golang less vim gpg strace \
+    iptables-persistent less vim gpg \
     containerd.io \
     kubelet kubeadm kubectl \
     helm
@@ -77,6 +77,15 @@ rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 cilium install --version 1.16.6
 # TODO - timeouts in health
 
+# slow system
+kubectl patch ds cilium -n kube-system --type='json' -p='[
+  {"op": "replace", "path": "/spec/template/spec/containers/0/readinessProbe/periodSeconds", "value": 300},
+  {"op": "replace", "path": "/spec/template/spec/containers/0/readinessProbe/timeoutSeconds", "value": 50},
+  {"op": "replace", "path": "/spec/template/spec/containers/0/livenessProbe/periodSeconds", "value": 300},
+  {"op": "replace", "path": "/spec/template/spec/containers/0/livenessProbe/timeoutSeconds", "value": 50},
+  {"op": "replace", "path": "/spec/template/spec/containers/0/startupProbe/periodSeconds", "value": 20},
+  {"op": "replace", "path": "/spec/template/spec/containers/0/startupProbe/timeoutSeconds", "value": 10}
+]'
 
 cilium status --wait
 

@@ -72,7 +72,7 @@ ssh:
 	@echo "[$(shell date +%T)] Waiting for SSH connection..."
 	@until ssh -q $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) exit; do sleep 1; done
 	@ssh $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT)
-	@echo "[$(shell date +%T)] Stopping VM..."; pkill $(QEMU_CMD) || true
+	@echo "[$(shell date +%T)] Stopping VM..."; pkill -f $(QEMU_CMD) || true
 
 clean:
 	@echo "Cleaning build directory: $(OUTPUT_DIR) and SSH keys"
