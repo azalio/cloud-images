@@ -71,8 +71,8 @@ ssh:
 		-nic user,hostfwd=tcp:127.0.0.1:60022-:22 &
 	@echo "[$(shell date +%T)] Waiting for SSH connection..."
 	@until ssh -q $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) exit; do sleep 1; done
-	@ssh $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT)
-	@echo "[$(shell date +%T)] Stopping VM..."; pkill -f $(QEMU_CMD) || true
+	@ssh $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) || true
+	@echo "[$(shell date +%T)] Stopping VM..."; pkill -f "$(QEMU_CMD).*$(OUTPUT_DIR)/packer-ubuntu" || true
 
 clean:
 	@echo "Cleaning build directory: $(OUTPUT_DIR) and SSH keys"
