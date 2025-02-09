@@ -77,7 +77,7 @@ ssh:
 	@ssh $(SSH_OPTS) -i $(SSH_KEY_NAME) ubuntu@localhost -p $(SSH_PORT) || true
 	@echo "[$(shell date +%T)] Stopping VM..."; pkill -f "$(QEMU_CMD).*$(OUTPUT_DIR)/packer-ubuntu" || true
 
-upload-image: output/packer-ubuntu
+upload-image:
 	@echo "[$(shell date +%T)] Uploading image to Git LFS..."
 	@git lfs track "output/packer-ubuntu"
 	@git add .gitattributes output/packer-ubuntu
