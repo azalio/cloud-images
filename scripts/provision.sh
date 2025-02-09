@@ -75,7 +75,6 @@ sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
 rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 
 cilium install --version 1.16.6
-# TODO - timeouts in health
 
 # slow system
 kubectl patch ds cilium -n kube-system --type='json' -p='[
@@ -83,11 +82,13 @@ kubectl patch ds cilium -n kube-system --type='json' -p='[
   {"op": "replace", "path": "/spec/template/spec/containers/0/readinessProbe/timeoutSeconds", "value": 50},
   {"op": "replace", "path": "/spec/template/spec/containers/0/livenessProbe/periodSeconds", "value": 300},
   {"op": "replace", "path": "/spec/template/spec/containers/0/livenessProbe/timeoutSeconds", "value": 50},
-  {"op": "replace", "path": "/spec/template/spec/containers/0/startupProbe/periodSeconds", "value": 20},
-  {"op": "replace", "path": "/spec/template/spec/containers/0/startupProbe/timeoutSeconds", "value": 10}
+  {"op": "replace", "path": "/spec/template/spec/containers/0/startupProbe/periodSeconds", "value": 200},
+  {"op": "replace", "path": "/spec/template/spec/containers/0/startupProbe/timeoutSeconds", "value": 100},
+  {"op": "replace", "path": "/spec/template/spec/containers/0/startupProbe/initialDelaySeconds", "value": 200},
 ]'
 
 # cilium status --wait
+cilium status --wait --wait-duration 20m
 
 # helm repo add cilium https://helm.cilium.io/
 # helm install cilium cilium/cilium --version 1.16.6 --namespace kube-system
@@ -148,5 +149,5 @@ sudo rm -rf /root/.bash_history
 sudo rm -rf /home/ubuntu/.bash_history
 
 echo "Setup completed!"
-echo "Kubernetes cluster info:"
+# echo "Kubernetes cluster info:"
 # kubectl cluster-info
